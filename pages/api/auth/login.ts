@@ -1,5 +1,4 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import bcrypt from 'bcryptjs'
 import { supabaseAdmin } from '@/lib/supabase'
 import { signToken, setAuthCookie } from '@/lib/auth'
 
@@ -25,11 +24,33 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(401).json({ error: 'Kullanıcı adı veya şifre hatalı.', debug: error?.message })
     }
 
-    console.log('Found user:', user.username, 'Hash prefix:', user.password_hash?.substring(0, 10))
-    const valid = await bcrypt.compare(password, user.password_hash)
-    console.log('Password valid:', valid)
+    // Geçici: bcrypt yerine direkt karşılaştırma veya sabit şifre
+    // Sonra bcrypt'e döneceğiz
+    let valid = false
+    
+    // Önce plain text dene
+    if (user.password_hash === password) {
+      valid = true
+    }
+    
+    // Sonra bcrypt dene
     if (!valid) {
-      return res.status(401).json({ error: 'Kullanıcı adı veya şifre hatalı.', debug: 'password_mismatch' })
+      try {
+        const bcrypt = require('bcryptjs')
+        valid = await bcrypt.compare(password, user.password_hash)
+      } catch(e) {
+        console.error('bcrypt error:', e)
+      }
+    }
+
+    console.log('Password valid:', valid, 'Hash starts:', user.password_hash?.substring(0, 15))
+    
+    if (!valid) {
+      return res.status(401).json({ 
+        error: 'Kullanıcı adı veya şifre hatalı.', 
+        debug: 'password_mismatch',
+        hash_prefix: user.password_hash?.substring(0, 15)
+      })
     }
 
     const token = signToken({ userId: user.id, username: user.username })
@@ -40,6 +61,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     })
   } catch (err) {
     console.error('Login error:', err)
-    return res.status(500).json({ error: 'Sunucu hatası.' })
+    return res.status(500).json({ error: 'Sunucu hatası.', debug: String(err) })
   }
 }
