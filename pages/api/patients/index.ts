@@ -29,7 +29,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const { data, error } = await db
       .from('patients')
-      .insert([{ first_name, last_name, phone, email, birth_date, services: services || [], total_fee: total_fee || 0, paid_fee: paid_fee || 0, notes: notes || '', status: status || 'aktif', photo_url }])
+      .insert([{ first_name, last_name, phone, email, birth_date: birth_date || null, services: services || [], total_fee: total_fee || 0, paid_fee: paid_fee || 0, notes: notes || '', status: status || 'aktif', photo_url: photo_url || null }])
       .select()
       .single()
 

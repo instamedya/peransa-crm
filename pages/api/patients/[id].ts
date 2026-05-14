@@ -15,7 +15,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const { data, error } = await db
       .from('patients')
-      .update({ first_name, last_name, phone, email, birth_date, services, total_fee, paid_fee, notes, status, photo_url })
+      .update({ first_name, last_name, phone, email, birth_date: birth_date || null, services, total_fee, paid_fee, notes, status, photo_url: photo_url || null })
       .eq('id', id)
       .select()
       .single()
