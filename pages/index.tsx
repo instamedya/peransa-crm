@@ -859,7 +859,7 @@ Hastalar: ${patients.map(p => `${p.first_name} ${p.last_name} | Tel: ${p.phone} 
               const active = tab === item.id
               return (
                 <div key={item.id} onClick={() => setTab(item.id)}
-                  style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '8px 4px 12px', cursor: 'pointer', borderTop: `2px solid ${active ? C.gold : 'transparent'}' }}>
+                  style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '8px 4px 12px', cursor: 'pointer', borderTop: `2px solid ${active ? C.gold : 'transparent'}` }}>
                   <div style={{ fontSize: 17, marginBottom: 3, color: active ? C.gold : 'rgba(255,255,255,0.35)' }}>{item.icon}</div>
                   <div style={{ fontSize: 9.5, fontWeight: active ? 700 : 400, color: active ? C.gold : 'rgba(255,255,255,0.35)' }}>{item.label}</div>
                 </div>
