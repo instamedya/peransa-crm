@@ -21,12 +21,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       .single()
 
     if (error || !user) {
-      return res.status(401).json({ error: 'Kullanıcı adı veya şifre hatalı.' })
+      console.error('User lookup error:', JSON.stringify(error))
+      return res.status(401).json({ error: 'Kullanıcı adı veya şifre hatalı.', debug: error?.message })
     }
 
+    console.log('Found user:', user.username, 'Hash prefix:', user.password_hash?.substring(0, 10))
     const valid = await bcrypt.compare(password, user.password_hash)
+    console.log('Password valid:', valid)
     if (!valid) {
-      return res.status(401).json({ error: 'Kullanıcı adı veya şifre hatalı.' })
+      return res.status(401).json({ error: 'Kullanıcı adı veya şifre hatalı.', debug: 'password_mismatch' })
     }
 
     const token = signToken({ userId: user.id, username: user.username })
